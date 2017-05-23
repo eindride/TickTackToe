@@ -341,39 +341,75 @@ public class TickTackToeGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_newGameButtonActionPerformed
 
     private void b11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_b11ActionPerformed
+        if (gameMatrix[1][1] == '-' && gameHasEnded == false) {
 
+            b11.setText(Character.toString('X'));
+            turn(1, 1);
+        }
     }//GEN-LAST:event_b11ActionPerformed
 
     private void b12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_b12ActionPerformed
+        if (gameMatrix[1][2] == '-' && gameHasEnded == false) {
 
+            b12.setText(Character.toString('X'));
+            turn(1, 2);
+        }
     }//GEN-LAST:event_b12ActionPerformed
 
     private void b13ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_b13ActionPerformed
+        if (gameMatrix[1][3] == '-' && gameHasEnded == false) {
 
+            b13.setText(Character.toString('X'));
+            turn(1, 3);
+        }
     }//GEN-LAST:event_b13ActionPerformed
 
     private void b21ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_b21ActionPerformed
+        if (gameMatrix[2][1] == '-' && gameHasEnded == false) {
 
+            b21.setText(Character.toString('X'));
+            turn(2, 1);
+        }
     }//GEN-LAST:event_b21ActionPerformed
 
     private void b22ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_b22ActionPerformed
+        if (gameMatrix[2][2] == '-' && gameHasEnded == false) {
 
+            b22.setText(Character.toString('X'));
+            turn(2, 2);
+        }
     }//GEN-LAST:event_b22ActionPerformed
 
     private void b23ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_b23ActionPerformed
+        if (gameMatrix[2][3] == '-' && gameHasEnded == false) {
 
+            b23.setText(Character.toString('X'));
+            turn(2, 3);
+        }
     }//GEN-LAST:event_b23ActionPerformed
 
     private void b31ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_b31ActionPerformed
+        if (gameMatrix[3][1] == '-' && gameHasEnded == false) {
 
+            b31.setText(Character.toString('X'));
+            turn(3, 1);
+        }
     }//GEN-LAST:event_b31ActionPerformed
 
     private void b32ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_b32ActionPerformed
+        if (gameMatrix[3][2] == '-' && gameHasEnded == false) {
 
+            b32.setText(Character.toString('X'));
+            turn(3, 2);
+        }
     }//GEN-LAST:event_b32ActionPerformed
 
     private void b33ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_b33ActionPerformed
+        if (gameMatrix[3][3] == '-' && gameHasEnded == false) {
 
+            b33.setText(Character.toString('X'));
+            turn(3, 3);
+        }
     }//GEN-LAST:event_b33ActionPerformed
 
     private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
@@ -536,4 +572,85 @@ public class TickTackToeGUI extends javax.swing.JFrame {
         }
     }
 
+    private boolean checkIfWon(char player) {
+        for (int i = 1; i <= 3; i++) {
+            if (gameMatrix[i][1] == gameMatrix[i][2] && gameMatrix[i][2] == gameMatrix[i][3] && gameMatrix[i][1] != '-') {
+                return true;
+            }
+        }
+        for (int i = 1; i <= 3; i++) {
+            if (gameMatrix[1][i] == gameMatrix[2][i] && gameMatrix[2][i] == gameMatrix[3][i] && gameMatrix[1][i] != '-') {
+                return true;
+            }
+        }
+        if (gameMatrix[1][1] == gameMatrix[2][2] && gameMatrix[2][2] == gameMatrix[3][3] && gameMatrix[1][1] != '-') {
+            return true;
+        }
+        if (gameMatrix[1][3] == gameMatrix[2][2] && gameMatrix[2][2] == gameMatrix[3][1] && gameMatrix[1][3] != '-') {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkIfDraw() {
+        int count = 0;
+        for (int i = 1; i <= 3; i++) {
+            for (int j = 1; j <= 3; j++) {
+                if (gameMatrix[i][j] != '-') {
+                    count++;
+                }
+            }
+        }
+        if (count == 9) {
+            return true;
+        }
+        return false;
+    }
+
+    private void turn(int i, int j) {
+        if (gameMatrix[i][j] == '-') {
+            gameMatrix[i][j] = 'X';
+            if (checkIfWon('X') == true) {
+                JOptionPane.showMessageDialog(null, "You win!");
+                gameHasEnded = true;
+                File file = new File("statisticsFile.txt");
+                try (Scanner fs = new Scanner(file)) {
+                    int win = fs.nextInt();
+                    int loses = fs.nextInt();
+                    win++;
+                    try (PrintWriter wr = new PrintWriter("statisticsFile.txt")) {
+                        wr.print(win);
+                        wr.print(" ");
+                        wr.print(loses);
+
+                    }
+                } catch (FileNotFoundException e) {
+                    System.out.println("FILE NOT FOUND");
+                }
+                loadStatistics();
+            } else if (checkIfDraw() == false) {
+                //pcTurn();
+                if (checkIfWon('0') == true) {
+                    JOptionPane.showMessageDialog(null, "You loose!");
+                    gameHasEnded = true;
+                    File file = new File("statisticsFile.txt");
+                    try (Scanner fs = new Scanner(file)) {
+                        int win = fs.nextInt();
+                        int loses = fs.nextInt();
+                        loses++;
+                        try (PrintWriter wr = new PrintWriter("statisticsFile.txt")) {
+                            wr.print(win);
+                            wr.print(" ");
+                            wr.print(loses);
+                        }
+                    } catch (FileNotFoundException e) {
+                        System.out.println("FILE NOT FOUND");
+                    }
+                    loadStatistics();
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "It's a draw!");
+            }
+        }
+    }
 }
