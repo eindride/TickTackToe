@@ -418,10 +418,83 @@ public class TickTackToeGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_backButtonActionPerformed
 
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
+        String fileName = JOptionPane.showInputDialog("Give a name for the save: ");
+        try (PrintWriter wr = new PrintWriter(fileName + ".txt")) {
+            for (int i = 1; i <= 3; i++) {
+                for (int j = 1; j <= 3; j++) {
+                    wr.print(gameMatrix[i][j]);
+                    wr.print(" ");
+                }
+            }
 
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(TickTackToeGUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        BufferedWriter bw = null;
+        FileWriter fw = null;
+
+        try {
+
+            File file = new File("savedGames.txt");
+
+            fw = new FileWriter(file.getAbsoluteFile(), true);
+            bw = new BufferedWriter(fw);
+
+            bw.write(fileName);
+            bw.write(' ');
+            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+            Date date = new Date();
+            bw.write(dateFormat.format(date));
+            bw.newLine();
+        } catch (IOException e) {
+        } finally {
+
+            try {
+
+                if (bw != null) {
+                    bw.close();
+                }
+
+                if (fw != null) {
+                    fw.close();
+                }
+
+            } catch (IOException ex) {
+            }
+        }
     }//GEN-LAST:event_saveButtonActionPerformed
 
     private void loadGameButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadGameButtonActionPerformed
+      File file = new File("savedGames.txt");
+        String list[] = new String[100];
+        int index = -1;
+        try (Scanner fs = new Scanner(file)) {
+            while (fs.hasNext()) {
+                index++;
+                list[index] = fs.nextLine();
+            }
+
+            for (int i = 0; i < index/2 ; i++) {
+                String temp = list[i];
+                list[i] = list[index - i ];
+                list[index - i ] = temp;
+            }
+
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(TickTackToeGUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        String fileName;
+        fileName = (String) JOptionPane.showInputDialog(null, "Pick a saved game", "Choose", JOptionPane.QUESTION_MESSAGE,
+                null, list, "Titan");
+        if (fileName != null) {
+            fileName = fileName.substring(0, fileName.indexOf(" "));
+
+            gamePanel.setVisible(true);
+            mainMenuPanel.setVisible(false);
+
+            initializeGameFromFile(fileName + ".txt");
+        }
 
     }//GEN-LAST:event_loadGameButtonActionPerformed
 
@@ -629,7 +702,7 @@ public class TickTackToeGUI extends javax.swing.JFrame {
                 }
                 loadStatistics();
             } else if (checkIfDraw() == false) {
-                //pcTurn();
+                   pcTurn();
                 if (checkIfWon('0') == true) {
                     JOptionPane.showMessageDialog(null, "You loose!");
                     gameHasEnded = true;
@@ -653,4 +726,42 @@ public class TickTackToeGUI extends javax.swing.JFrame {
             }
         }
     }
+    private void pcTurn() {
+        int iRandom;
+        int jRandom;
+        do {
+            iRandom = (int) (Math.random() * 3 + 1);
+            jRandom = (int) (Math.random() * 3 + 1);
+        } while (gameMatrix[iRandom][jRandom] != '-');
+        gameMatrix[iRandom][jRandom] = '0';
+        if (iRandom == 1 && jRandom == 1) {
+            b11.setText(Character.toString('0'));
+        }
+        if (iRandom == 1 && jRandom == 2) {
+            b12.setText(Character.toString('0'));
+        }
+        if (iRandom == 1 && jRandom == 3) {
+            b13.setText(Character.toString('0'));
+        }
+        if (iRandom == 2 && jRandom == 1) {
+            b21.setText(Character.toString('0'));
+        }
+        if (iRandom == 2 && jRandom == 2) {
+            b22.setText(Character.toString('0'));
+        }
+        if (iRandom == 2 && jRandom == 3) {
+            b23.setText(Character.toString('0'));
+        }
+        if (iRandom == 3 && jRandom == 1) {
+            b31.setText(Character.toString('0'));
+        }
+        if (iRandom == 3 && jRandom == 2) {
+            b32.setText(Character.toString('0'));
+        }
+        if (iRandom == 3 && jRandom == 3) {
+            b33.setText(Character.toString('0'));
+        }
+
+    }
+
 }
